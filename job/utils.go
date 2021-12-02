@@ -1,9 +1,16 @@
 package job
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
-func addJobIntoMyJobs(id int, name string, myFunc MyFunc) {
+func AddJobIntoMyJobs(id int, name string, myFunc MyFunc) (err error) {
+	if myJobs[id].myFunc != nil {
+		err = errors.New("ID job is already ocupied ")
+	}
 	myJobs[id] = myJob{id: id, name: name, myFunc: myFunc}
+	return
 }
 
 func ExecuteJobByID(id int) (err error) {
