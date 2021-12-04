@@ -18,27 +18,33 @@ import (
 func main() {
 	var idJob int
 
+	c := make(chan bool)
+
 	err := cmd.ClearTerminal()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Println("Welcome to job-dispenser")
-	for {
-		fmt.Println("What work you wish to dispense?")
-		fmt.Print(job.PrintAllJobs())
-		fmt.Print("> ")
-		_, err = fmt.Scan(&idJob)
-		if err != nil {
-			log.Fatal(err)
-		}
+	fmt.Println("What work you wish to dispense?")
+	fmt.Print(job.PrintAllJobs())
+	fmt.Print("> ")
 
-		check := job.VerifyIsExistByID(idJob)
-		if !check {
-			log.Fatal("Job ID invalid")
-		}
-
-		job.ExecuteJobByID(idJob)
+	_, err = fmt.Scan(&idJob)
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	check := job.VerifyIsExistByID(idJob)
+	if !check {
+		log.Fatal("Job ID invalid")
+	}
+
+	err = job.ExecuteJobByID(idJob, c)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	<-c
 
 }

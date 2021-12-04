@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func myPrint() (err error) {
+func myPrint(c chan<- bool) (err error) {
 	fmt.Println("What do you want to print?")
 
 	reader := bufio.NewReader(os.Stdin)
@@ -17,13 +17,17 @@ func myPrint() (err error) {
 		return
 	}
 
-	message := strings.Split(string(messageBytes), "")
+	message := strings.Split(string(messageBytes), " ")
+	delay := time.Duration(len(message)) * time.Second
 
-	fmt.Println("Job Sended")
 	go func() {
-		time.Sleep(time.Duration(len(message)) * time.Second)
+		fmt.Println()
+		fmt.Println("Job Sended")
+		time.Sleep(delay)
 		fmt.Println(string(messageBytes))
 		fmt.Println("Job Completed")
+		fmt.Println()
+		c <- true
 	}()
 	return
 }

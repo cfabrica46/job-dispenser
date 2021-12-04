@@ -13,8 +13,8 @@ func AddJobIntoMyJobs(id int, name string, myFunc MyFunc) (err error) {
 	return
 }
 
-func ExecuteJobByID(id int) (err error) {
-	err = myJobs[id].myFunc()
+func ExecuteJobByID(id int, c chan<- bool) (err error) {
+	err = myJobs[id].myFunc(c)
 	if err != nil {
 		return
 	}

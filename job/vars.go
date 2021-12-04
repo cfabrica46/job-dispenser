@@ -4,7 +4,7 @@ import "log"
 
 var myJobs = make(map[int]myJob)
 
-type MyFunc func() error
+type MyFunc func(c chan<- bool) error
 
 func init() {
 	err := AddJobIntoMyJobs(1, "print", myPrint)
