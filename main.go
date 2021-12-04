@@ -20,14 +20,19 @@ func main() {
 
 	c := make(chan bool)
 
-	err := cmd.ClearTerminal()
+	jobDispenser, err := job.NewJobDispenserFilled()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = cmd.ClearTerminal()
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Println("Welcome to job-dispenser")
-	fmt.Println("What work you wish to dispense?")
-	fmt.Print(job.PrintAllJobs())
+	fmt.Println("What do want to do?")
+	fmt.Print(jobDispenser.PrintAllJobs())
 	fmt.Print("> ")
 
 	_, err = fmt.Scan(&idJob)
@@ -35,12 +40,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	check := job.VerifyIsExistByID(idJob)
+	check := jobDispenser.VerifyIsExistByID(idJob)
 	if !check {
 		log.Fatal("Job ID invalid")
 	}
 
-	err = job.ExecuteJobByID(idJob, c)
+	err = jobDispenser.ExecuteJobByID(idJob, c)
 	if err != nil {
 		log.Fatal(err)
 	}
