@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/cfabrica46/job-dispenser/cmd"
 	"github.com/cfabrica46/job-dispenser/job"
 )
 
@@ -16,40 +15,38 @@ import (
 
 */
 func main() {
-	var idJob int
+	for {
+		var idJob int
 
-	c := make(chan bool)
+		jobDispenser, err := job.NewJobDispenserFilled()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	jobDispenser, err := job.NewJobDispenserFilled()
-	if err != nil {
-		log.Fatal(err)
+		/* err = cmd.ClearTerminal()
+		if err != nil {
+			log.Fatal(err)
+		} */
+
+		fmt.Println("Welcome to job-dispenser")
+		fmt.Println()
+		fmt.Println("What do want to do?")
+		fmt.Print(job.GetStringOptions(jobDispenser))
+		fmt.Print("> ")
+
+		_, err = fmt.Scan(&idJob)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println()
+
+		err = jobDispenser.ExecuteJobByIndex(idJob)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// <-c
 	}
-
-	err = cmd.ClearTerminal()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Welcome to job-dispenser")
-	fmt.Println("What do want to do?")
-	fmt.Print(jobDispenser.PrintAllJobs())
-	fmt.Print("> ")
-
-	_, err = fmt.Scan(&idJob)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	check := jobDispenser.VerifyIsExistByID(idJob)
-	if !check {
-		log.Fatal("Job ID invalid")
-	}
-
-	err = jobDispenser.ExecuteJobByID(idJob, c)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	<-c
 
 }

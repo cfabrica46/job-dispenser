@@ -1,9 +1,12 @@
 package job
 
-type MyFunc func(c chan<- bool) error
+type MyFunc func(c chan bool) error
 
 type myJob struct {
-	id     int
 	name   string
 	myFunc MyFunc
+}
+
+func newMyJob(name string, myFunc MyFunc) myJob {
+	return myJob{name: name, myFunc: myFunc}
 }

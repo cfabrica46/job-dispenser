@@ -2,45 +2,56 @@ package job
 
 import (
 	"errors"
-	"fmt"
 )
 
 type JobDispenser struct {
-	myJobs map[int]myJob
+	myJobs  []myJob
+	restore chan bool
 }
 
 func NewJobDispenser() JobDispenser {
-	return JobDispenser{myJobs: make(map[int]myJob)}
+	return JobDispenser{myJobs: []myJob{}, restore: make(chan bool)}
 }
 
 func NewJobDispenserFilled() (jobDispenser JobDispenser, err error) {
 	jobDispenser = NewJobDispenser()
-	err = jobDispenser.AddJob(1, "print", myPrint)
+	err = jobDispenser.AddJob(newMyJob("Print some text", myPrint))
 	if err != nil {
 		return
 	}
-	return
-}
 
-func (j JobDispenser) AddJob(id int, name string, myFunc MyFunc) (err error) {
-	if j.myJobs[id].myFunc != nil {
-		err = errors.New("ID job is already ocupied ")
+	err = jobDispenser.AddJob(newMyJob("Wait to finish jobs", myAbort))
+	if err != nil {
+		return
 	}
-	j.myJobs[id] = myJob{id: id, name: name, myFunc: myFunc}
-	return
-}
 
-func (j JobDispenser) ExecuteJobByID(id int, c chan<- bool) (err error) {
-	return j.myJobs[id].myFunc(c)
-}
-
-func (j JobDispenser) PrintAllJobs() (result string) {
-	for i := range j.myJobs {
-		result += fmt.Sprintf("%d. %s\n", j.myJobs[i].id, j.myJobs[i].name)
+	err = jobDispenser.AddJob(newMyJob("Abort all jobs", myAbort))
+	if err != nil {
+		return
 	}
+
 	return
 }
 
-func (j JobDispenser) VerifyIsExistByID(id int) bool {
-	return j.myJobs[id].myFunc != nil
+func (j *JobDispenser) AddJob(job myJob) (err error) {
+	j.myJobs = append(j.myJobs, job)
+	return
+}
+
+func (j JobDispenser) ExecuteJobByIndex(index int) (err error) {
+	if !j.isValidIndex(index) {
+		err = errors.New("index invalid")
+		return
+	}
+	go j.myJobs[index-1].myFunc(j.restore)
+
+	return
+}
+
+func (j JobDispenser) isValidIndex(index int) (check bool) {
+	if len(j.myJobs) < index || index <= 0 {
+		return
+	}
+	check = true
+	return
 }
