@@ -1,6 +1,6 @@
 package job
 
-type MyFunc func(c chan bool) error
+type MyFunc func(restore, abort chan bool) error
 
 type myJob struct {
 	name   string

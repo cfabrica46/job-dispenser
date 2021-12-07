@@ -5,12 +5,12 @@ import (
 )
 
 type JobDispenser struct {
-	myJobs  []myJob
-	restore chan bool
+	myJobs         []myJob
+	Restore, Abort chan bool
 }
 
 func NewJobDispenser() JobDispenser {
-	return JobDispenser{myJobs: []myJob{}, restore: make(chan bool)}
+	return JobDispenser{myJobs: []myJob{}, Restore: make(chan bool), Abort: make(chan bool)}
 }
 
 func NewJobDispenserFilled() (jobDispenser JobDispenser, err error) {
@@ -43,7 +43,9 @@ func (j JobDispenser) ExecuteJobByIndex(index int) (err error) {
 		err = errors.New("index invalid")
 		return
 	}
-	go j.myJobs[index-1].myFunc(j.restore)
+	go j.myJobs[index-1].myFunc(j.Restore, j.Abort)
+
+	<-j.Restore
 
 	return
 }

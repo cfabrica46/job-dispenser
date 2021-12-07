@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func myPrint(restore chan bool) (err error) {
+func myPrint(restore, abort chan bool) (err error) {
 	fmt.Println("What do you want to print?")
 	fmt.Print("> ")
 
@@ -20,7 +20,7 @@ func myPrint(restore chan bool) (err error) {
 
 	restore <- true
 
-	fmt.Println()
+	// fmt.Println(<-abort)
 
 	message := strings.Split(string(messageBytes), " ")
 	delay := time.Duration(len(message)) * time.Second
@@ -42,13 +42,14 @@ func myPrint(restore chan bool) (err error) {
 	return
 }
 
-func myWait(restore chan bool) (err error) {
+func myWait(restore, abort chan bool) (err error) {
 	restore <- true
 	return
 }
 
-func myAbort(restore chan bool) (err error) {
+func myAbort(restore, abort chan bool) (err error) {
 	restore <- true
+	// abort <- true
 	fmt.Println("Abort All Jobs")
 	return
 }
