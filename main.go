@@ -9,6 +9,7 @@ import (
 
 // owo
 //holi
+//jasas
 
 /* Para aprovechar la concurrencia utilizare 4 tipos de jobs
 1. agrupadas: las cuales seran un conjunto de tareas que tendran un orden para ejecutarse
