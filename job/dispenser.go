@@ -2,6 +2,7 @@ package job
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -22,10 +23,10 @@ func NewJobDispenserFilled() (jobDispenser JobDispenser, err error) {
 		return
 	}
 
-	err = jobDispenser.AddJob(newMyJob("Wait to finish jobs", myAbort))
+	/* err = jobDispenser.AddJob(newMyJob("Wait to finish jobs", myAbort))
 	if err != nil {
 		return
-	}
+	} */
 
 	err = jobDispenser.AddJob(newMyJob("Abort all jobs", myAbort))
 	if err != nil {
@@ -58,11 +59,12 @@ func (j *JobDispenser) ExecuteJobByIndex(index int) (err error) {
 	j.jobsInProgress[jobID] = newJob
 
 	go j.jobsInProgress[jobID].myFunc(j, jobID)
+	fmt.Println(len(j.jobsInProgress))
 	return
 }
 
 func (j JobDispenser) isValidIndex(index int) (check bool) {
-	if len(j.myJobs) < index || index < 0 {
+	if len(j.myJobs) <= index || index < 0 {
 		return
 	}
 	check = true

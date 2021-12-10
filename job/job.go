@@ -1,6 +1,6 @@
 package job
 
-type MyFunc func(j *JobDispenser, jobID string) error
+type MyFunc func(j *JobDispenser, jobID string)
 
 type myJob struct {
 	name   string

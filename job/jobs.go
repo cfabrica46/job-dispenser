@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func myDefault(jobDispenser *JobDispenser, jobID string) (err error) {
+func myDefault(jobDispenser *JobDispenser, jobID string) {
 	defer delete(jobDispenser.jobsInProgress, jobID)
 	for {
 		select {
@@ -19,19 +19,24 @@ func myDefault(jobDispenser *JobDispenser, jobID string) (err error) {
 	}
 }
 
-func myWait(jobDispenser *JobDispenser, jobID string) (err error) {
+/* func myWait(jobDispenser *JobDispenser, jobID string) (err error) {
 	return
-}
+} */
 
-func myAbort(jobDispenser *JobDispenser, jobID string) (err error) {
+func myAbort(jobDispenser *JobDispenser, jobID string) {
 	defer delete(jobDispenser.jobsInProgress, jobID)
 
-	fmt.Println("Abort All Jobs")
+	if len(jobDispenser.jobsInProgress) == 1 {
+		fmt.Printf("\rNot Jobs to Abort\n")
+		fmt.Print("> ")
+		return
+	}
 
 	for i := range jobDispenser.jobsInProgress {
 		if i != jobID {
 			jobDispenser.jobsInProgress[i].Abort <- true
 		}
 	}
-	return
+	fmt.Printf("\rAbort All Jobs\n")
+	fmt.Print("> ")
 }
