@@ -7,14 +7,15 @@ import (
 
 func myDefault(jobDispenser *JobDispenser, jobID string) {
 	defer delete(jobDispenser.jobsInProgress, jobID)
+
+	t := time.NewTicker(time.Second * 2)
+
 	for {
 		select {
 		case <-jobDispenser.jobsInProgress[jobID].Abort:
 			return
-		default:
-			fmt.Printf("\rJOB %s\n", jobID)
-			fmt.Print(">")
-			time.Sleep(time.Second * 2)
+		case <-t.C:
+			fmt.Printf("JOB %s\n", jobID)
 		}
 	}
 }

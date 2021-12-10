@@ -2,7 +2,6 @@ package job
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/google/uuid"
 )
@@ -18,27 +17,13 @@ func NewJobDispenser() JobDispenser {
 
 func NewJobDispenserFilled() (jobDispenser JobDispenser, err error) {
 	jobDispenser = NewJobDispenser()
-	err = jobDispenser.AddJob(newMyJob("Job Default", myDefault))
-	if err != nil {
-		return
-	}
-
-	/* err = jobDispenser.AddJob(newMyJob("Wait to finish jobs", myAbort))
-	if err != nil {
-		return
-	} */
-
-	err = jobDispenser.AddJob(newMyJob("Abort all jobs", myAbort))
-	if err != nil {
-		return
-	}
-
+	jobDispenser.AddJob(newMyJob("Job Default", myDefault))
+	jobDispenser.AddJob(newMyJob("Abort all jobs", myAbort))
 	return
 }
 
-func (j *JobDispenser) AddJob(job myJob) (err error) {
+func (j *JobDispenser) AddJob(job myJob) {
 	j.myJobs = append(j.myJobs, job)
-	return
 }
 
 func (j *JobDispenser) ExecuteJobByIndex(index int) (err error) {
@@ -59,12 +44,11 @@ func (j *JobDispenser) ExecuteJobByIndex(index int) (err error) {
 	j.jobsInProgress[jobID] = newJob
 
 	go j.jobsInProgress[jobID].myFunc(j, jobID)
-	fmt.Println(len(j.jobsInProgress))
 	return
 }
 
 func (j JobDispenser) isValidIndex(index int) (check bool) {
-	if len(j.myJobs) <= index || index < 0 {
+	if index >= len(j.myJobs) || index < 0 {
 		return
 	}
 	check = true

@@ -23,16 +23,10 @@ func main() {
 	}
 
 	for {
-		/* err = cmd.ClearTerminal()
-		if err != nil {
-			log.Fatal(err)
-		} */
-
 		fmt.Println("Welcome to job-dispenser")
 		fmt.Println()
 		fmt.Println("What do want to do?")
 		fmt.Print(job.GetStringOptions(jobDispenser))
-		fmt.Print("> ")
 
 		_, err = fmt.Scan(&idJob)
 		if err != nil {
