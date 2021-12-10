@@ -1,10 +1,11 @@
 package job
 
-type MyFunc func(restore, abort chan bool) error
+type MyFunc func(j *JobDispenser, jobID string) error
 
 type myJob struct {
 	name   string
 	myFunc MyFunc
+	Abort  chan bool
 }
 
 func newMyJob(name string, myFunc MyFunc) myJob {

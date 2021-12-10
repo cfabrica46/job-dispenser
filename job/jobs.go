@@ -1,55 +1,37 @@
 package job
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strings"
 	"time"
 )
 
-func myPrint(restore, abort chan bool) (err error) {
-	fmt.Println("What do you want to print?")
-	fmt.Print("> ")
-
-	reader := bufio.NewReader(os.Stdin)
-	messageBytes, err := reader.ReadString('\n')
-	if err != nil {
-		return
+func myDefault(jobDispenser *JobDispenser, jobID string) (err error) {
+	defer delete(jobDispenser.jobsInProgress, jobID)
+	for {
+		select {
+		case <-jobDispenser.jobsInProgress[jobID].Abort:
+			return
+		default:
+			fmt.Printf("\rJOB %s\n", jobID)
+			fmt.Print(">")
+			time.Sleep(time.Second * 2)
+		}
 	}
+}
 
-	restore <- true
-
-	// fmt.Println(<-abort)
-
-	message := strings.Split(string(messageBytes), " ")
-	delay := time.Duration(len(message)) * time.Second
-
-	/* select {
-	case <-c:
-		log.Fatal("holis")
-		fmt.Println("Abort")
-		return
-	default: */
-	fmt.Printf("\r\n")
-	fmt.Printf("\rJob Sended\n")
-	time.Sleep(delay)
-	fmt.Printf("\rPRINT: %s\n", string(messageBytes))
-	fmt.Println("Job Completed")
-	fmt.Println()
-	fmt.Print("> ")
-	// }
+func myWait(jobDispenser *JobDispenser, jobID string) (err error) {
 	return
 }
 
-func myWait(restore, abort chan bool) (err error) {
-	restore <- true
-	return
-}
+func myAbort(jobDispenser *JobDispenser, jobID string) (err error) {
+	defer delete(jobDispenser.jobsInProgress, jobID)
 
-func myAbort(restore, abort chan bool) (err error) {
-	restore <- true
-	// abort <- true
 	fmt.Println("Abort All Jobs")
+
+	for i := range jobDispenser.jobsInProgress {
+		if i != jobID {
+			jobDispenser.jobsInProgress[i].Abort <- true
+		}
+	}
 	return
 }

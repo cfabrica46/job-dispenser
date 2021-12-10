@@ -15,14 +15,14 @@ import (
 
 */
 func main() {
+	var idJob int
+
+	jobDispenser, err := job.NewJobDispenserFilled()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	for {
-		var idJob int
-
-		jobDispenser, err := job.NewJobDispenserFilled()
-		if err != nil {
-			log.Fatal(err)
-		}
-
 		/* err = cmd.ClearTerminal()
 		if err != nil {
 			log.Fatal(err)
@@ -41,7 +41,7 @@ func main() {
 
 		fmt.Println()
 
-		err = jobDispenser.ExecuteJobByIndex(idJob)
+		err = jobDispenser.ExecuteJobByIndex(idJob - 1)
 		if err != nil {
 			log.Fatal(err)
 		}
