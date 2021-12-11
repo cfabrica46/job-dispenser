@@ -15,7 +15,7 @@ func myDefault(jobDispenser *JobDispenser, jobID string) {
 		case <-jobDispenser.jobsInProgress[jobID].Abort:
 			return
 		case <-t.C:
-			fmt.Printf("JOB %s\n", jobID)
+			fmt.Println("JOB", jobID)
 		}
 	}
 }
@@ -28,8 +28,7 @@ func myAbort(jobDispenser *JobDispenser, jobID string) {
 	defer delete(jobDispenser.jobsInProgress, jobID)
 
 	if len(jobDispenser.jobsInProgress) == 1 {
-		fmt.Printf("\rNot Jobs to Abort\n")
-		fmt.Print("> ")
+		fmt.Println("Not Jobs to Abort")
 		return
 	}
 
@@ -38,6 +37,6 @@ func myAbort(jobDispenser *JobDispenser, jobID string) {
 			jobDispenser.jobsInProgress[i].Abort <- true
 		}
 	}
-	fmt.Printf("\rAbort All Jobs\n")
+	fmt.Println("Abort All Jobs")
 	fmt.Print("> ")
 }
